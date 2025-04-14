@@ -1,7 +1,11 @@
 package leetcode.weekly;
 
+import leetcode.struct.FenwickTree;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class w250413 {
 
@@ -47,20 +51,6 @@ public class w250413 {
         }
         ans.append(s1);
         return ans.toString();
-    }
-
-    public static void main(String[] args) {
-//        String z = new w250413().smallestPalindrome("z");
-//        System.out.println(z);
-//        String z = new w250413().smallestPalindrome("babab");
-//        System.out.println(z);
-//        z = new w250413().smallestPalindrome("daccad");
-//        System.out.println(z);
-
-        String bacab = new w250413().smallestPalindrome("jbukqunfhgoreeroghfnuqkubj",
-                212);
-        System.out.println(bacab);
-
     }
 
     public String smallestPalindrome(String s, int k) {
@@ -134,5 +124,102 @@ public class w250413 {
             }
         }
         return (int) res;
+    }
+
+
+    public int[] treeQueries(int n, int[][] edges, int[][] queries) {
+        List<Integer>[] g = new ArrayList[n + 1];
+        Arrays.setAll(g, i -> new ArrayList<>());
+        for (int[] e : edges) {
+            int x = e[0];
+            int y = e[1];
+            g[x].add(y);
+            g[y].add(x);
+        }
+
+        int[] in = new int[n + 1];
+        int[] out = new int[n + 1];
+        dfs(1, 0, g, in, out);
+
+        int[] weight = new int[n + 1];
+        FenwickTree diff = new FenwickTree(n);
+
+        for (int[] e : edges) {
+            update(e[0], e[1], e[2], in, out, weight, diff);
+        }
+
+        List<Integer> ans = new ArrayList<>();
+        for (int[] q : queries) {
+            if (q[0] == 1) {
+                update(q[1], q[2], q[3], in, out, weight, diff);
+            } else {
+                ans.add(diff.pre(in[q[1]]));
+            }
+        }
+        return ans.stream().mapToInt(i -> i).toArray();
+    }
+
+    private int clock = 0;
+
+    private void dfs(int x, int fa, List<Integer>[] g, int[] in, int[] out) {
+        in[x] = ++clock; // 进来的时间
+        for (int y : g[x]) {
+            if (y != fa) {
+                dfs(y, x, g, in, out);
+            }
+        }
+        out[x] = clock; // 离开的时间
+    }
+
+    private void update(int x, int y, int w, int[] in, int[] out, int[] weight, FenwickTree diff) {
+        // 保证 y 是 x 的儿子
+        if (in[x] > in[y]) {
+            y = x;
+        }
+        int d = w - weight[y]; // 边权的增量
+        weight[y] = w;
+        // 把子树 y 中的最短路长度都增加 d（用差分树状数组维护）
+        diff.update(in[y], d);
+        diff.update(out[y] + 1, -d);
+    }
+
+    public static void main(String[] args) {
+//        String z = new w250413().smallestPalindrome("z");
+//        System.out.println(z);
+//        String z = new w250413().smallestPalindrome("babab");
+//        System.out.println(z);
+//        z = new w250413().smallestPalindrome("daccad");
+//        System.out.println(z);
+
+//        String bacab = new w250413().smallestPalindrome("jbukqunfhgoreeroghfnuqkubj",
+//                212);
+//        System.out.println(bacab);
+        int n = 7;
+        int[][] edges = new int[6][3];
+        edges[0] = new int[]{1,3,3};
+        edges[1] = new int[]{1,7,7};
+        edges[2] = new int[]{3,4,5};
+        edges[3] = new int[]{2,3,4};
+        edges[4] = new int[]{4,5,10};
+        edges[5] = new int[]{4,6,11};
+
+        int[][] queries = new int[8][];
+        int[] query1 = new int[]{2, 1};
+        int[] query2 = new int[]{2, 2};
+        int[] query3 = new int[]{2, 3};
+        int[] query4 = new int[]{2, 4};
+        int[] query5 = new int[]{2, 5};
+        int[] query6 = new int[]{2, 6};
+        int[] query7 = new int[]{2, 7};
+        queries[1] = query1;
+        queries[2] = query2;
+        queries[3] = query3;
+        queries[4] = query4;
+        queries[5] = query5;
+        queries[6] = query6;
+        queries[7] = query7;
+        queries[0] = new int[]{1,4,3,6};
+        int[] ints = new w250413().treeQueries(7, edges, queries);
+        System.out.println(Arrays.toString(ints));
     }
 }

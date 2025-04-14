@@ -32,4 +32,6 @@ public class w250412 {
         System.out.println(Integer.toBinaryString(s3));
         System.out.println(Integer.toBinaryString(s4));
     }
+
+
 }
