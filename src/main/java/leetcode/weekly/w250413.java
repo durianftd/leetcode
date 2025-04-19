@@ -1,8 +1,7 @@
 package leetcode.weekly;
 
-import leetcode.struct.FenwickTree;
+import leetcode.struct.FenwickTree_v1;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -142,7 +141,7 @@ public class w250413 {
         dfs(1, 0, g, in, out);
 
         int[] weight = new int[n + 1];
-        FenwickTree diff = new FenwickTree(n);
+        FenwickTree_v1 diff = new FenwickTree_v1(n);
 
         for (int[] e : edges) {
             update(e[0], e[1], e[2], in, out, weight, diff);
@@ -171,7 +170,7 @@ public class w250413 {
         out[x] = clock; // 离开的时间
     }
 
-    private void update(int x, int y, int w, int[] in, int[] out, int[] weight, FenwickTree diff) {
+    private void update(int x, int y, int w, int[] in, int[] out, int[] weight, FenwickTree_v1 diff) {
         // 保证 y 是 x 的儿子
         if (in[x] > in[y]) {
             y = x;

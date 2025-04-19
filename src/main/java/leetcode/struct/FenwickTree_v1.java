@@ -1,10 +1,13 @@
 package leetcode.struct;
 
-public class FenwickTree {
+/**
+ * 最基本法，适合单点修改，区间查询
+ */
+public class FenwickTree_v1 {
 
     private final int[] tree;
 
-    public FenwickTree(int n) {
+    public FenwickTree_v1(int n) {
         tree = new int[n + 1]; // 使用下标 1 到 n
     }
 
