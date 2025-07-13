@@ -24,6 +24,7 @@ public class ThreadStateTest {
         Thread.sleep(1000);
         System.out.println("over");
 
+
         synchronized (lock) {
             lock.notify();
         }
